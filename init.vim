@@ -1,29 +1,105 @@
-" Plugins will be downloaded under the specified directory.
-call plug#begin('~/.vim/plugged')
-
-" Declare the list of plugins.
+call plug#begin()
 Plug 'scrooloose/nerdtree'
 Plug 'jiangmiao/auto-pairs'
+"Plug 'arcticicestudio/nord-vim'
 Plug 'morhetz/gruvbox'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'yuezk/vim-js'
 Plug 'maxmellon/vim-jsx-pretty'
-
-"if has('nvim')
-"	Plug 'zchee/deoplete-jedi'
-"	Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-"else
-"  Plug 'zchee/deoplete-jedi'
-"  Plug 'Shougo/deoplete.nvim'
-"  Plug 'roxma/nvim-yarp'
-"  Plug 'roxma/vim-hug-neovim-rpc'
-"endif
-
-Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
-
-" List ends here. Plugins become visible to Vim after this call.
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 call plug#end()
+
+" Terminal true color support
+set termguicolors
+
+" Terminal font
+set guifont=Fira\ Code\ Medium:h13 
+
+set number " Enable line numbering
+" Set tab size 4
+set tabstop=4
+set shiftwidth=4
+
+" Gruvbox theme settings
+let g:gruvbox_italic=1
+"colorscheme nord
+colorscheme gruvbox
+set background=dark " Setting dark mode
+
+" Airline settings
+"let g:airline_theme='nord'
+let g:airline_theme='gruvbox'
+let g:airline_right_alt_sep = ''
+let g:airline_right_sep = ''
+let g:airline_left_alt_sep= ''
+let g:airline_left_sep = ''
+
+" Firefox style tabbing
+nnoremap <silent> <C-S-tab> :tabprevious<CR>
+nnoremap <silent> <C-tab>   :tabnext<CR>
+nnoremap <silent> <C-t>     :tabnew<CR>
+
+" Leader key bind
+let mapleader=";"
+
+" Shortcut to edit THIS configuration file: (e)dit (c)onfiguration
+function! EditConfig()
+	tabnew
+	e $MYVIMRC
+endfunction
+nnoremap <silent> <leader>ec :call EditConfig()<CR>
+
+" Shortcut to source (reload) THIS configuration file after editing it: (s)ource (c)onfiguraiton
+nnoremap <silent> <leader>sc :source $MYVIMRC<CR>
+
+" NERDTree toggle bind
+nnoremap <silent> <Space> :NERDTreeToggle<CR>
+
+" Close current tab
+nnoremap <silent> <leader>q :q!<CR>
+
+" Shortcut to paste from clipboard
+nnoremap <leader>p "+p
+
+" Shortcut to change pwd to current file directory
+nnoremap <leader>cd :cd %:p:h<CR>:pwd<CR>
+
+" Terminal Function
+let g:term_buf = 0
+let g:term_win = 0
+function! TermToggle(height)
+    if win_gotoid(g:term_win)
+        hide
+    else
+        botright new
+        exec "resize " . a:height
+        try
+            exec "buffer " . g:term_buf
+        catch
+            call termopen($SHELL, {"detach": 0})
+            let g:term_buf = bufnr("")
+            set nonumber
+            set norelativenumber
+            set signcolumn=no
+        endtry
+        startinsert!
+        let g:term_win = win_getid()
+    endif
+endfunction
+
+" Toggle terminal on/off (neovim)
+nnoremap <silent> <leader>; :call TermToggle(9)<CR>
+
+" Terminal go back to normal mode
+tnoremap <Esc> <C-\><C-n>
+tnoremap :q! <C-\><C-n>:q!<CR>
+
+" Shortcut for pane navigation
+nmap <silent> <A-k> :wincmd k<CR>
+nmap <silent> <A-j> :wincmd j<CR>
+nmap <silent> <A-h> :wincmd h<CR>
+nmap <silent> <A-l> :wincmd l<CR>
 
 "===============================================================
 " if hidden is not set, TextEdit might fail.
@@ -130,88 +206,3 @@ command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organize
 " Add status line support, for integration with other plugin, checkout `:h coc-status`
 set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
 "===============================================================
-
-set termguicolors
-set background=dark " Setting dark mode
-let g:airline_theme='gruvbox'
-let g:airline_right_alt_sep = ''
-let g:airline_right_sep = ''
-let g:airline_left_alt_sep= ''
-let g:airline_left_sep = ''
-let g:gruvbox_italic=1
-let g:deoplete#enable_at_startup = 1
-"set guifont=Fira\ Mono\ Medium
-set guifont=Fira\ Code\ Medium:h13 
-"map <C-n> :NERDTreeToggle<CR>
-nnoremap <silent> <C-S-tab> :tabprevious<CR>
-nnoremap <silent> <C-tab>   :tabnext<CR>
-nnoremap <silent> <C-t>     :tabnew<CR>
-"nnoremap <C-Delete> :tabclose<CR>
-"inoremap <C-S-tab> <Esc>:tabprevious<CR>i
-"inoremap <C-tab>   <Esc>:tabnext<CR>i
-"inoremap <C-t>     <Esc>:tabnew<CR>
-
-" <TAB>: completion.
-"inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
-
-" change the leader key from "\" to ";" ("," is also popular)
-let mapleader=";"
-
-" Shortcut to edit THIS configuration file: (e)dit (c)onfiguration
-function! EditConfig()
-	tabnew
-	e $MYVIMRC
-endfunction
-nnoremap <silent> <leader>ec :call EditConfig()<CR>
-
-" Shortcut to source (reload) THIS configuration file after editing it: (s)ource (c)onfiguraiton
-nnoremap <silent> <leader>sc :source $MYVIMRC<CR>
-
-nnoremap <silent> <Space> :NERDTreeToggle<CR>
-
-nnoremap <silent> <leader>q :q!<CR>
-
-imap <C-d> <C-o>diw
-" Shortcut to paste from clipboard
-"nnoremap <leader>p +"p
-
-" Terminal Function
-let g:term_buf = 0
-let g:term_win = 0
-function! TermToggle(height)
-    if win_gotoid(g:term_win)
-        hide
-    else
-        botright new
-        exec "resize " . a:height
-        try
-            exec "buffer " . g:term_buf
-        catch
-            call termopen($SHELL, {"detach": 0})
-            let g:term_buf = bufnr("")
-            set nonumber
-            set norelativenumber
-            set signcolumn=no
-        endtry
-        startinsert!
-        let g:term_win = win_getid()
-    endif
-endfunction
-
-" Toggle terminal on/off (neovim)
-nnoremap <silent> <leader>; :call TermToggle(9)<CR>
-
-" Terminal go back to normal mode
-tnoremap <Esc> <C-\><C-n>
-tnoremap :q! <C-\><C-n>:q!<CR>
-
-" Shortcut for pane navigation
-nmap <silent> <A-k> :wincmd k<CR>
-nmap <silent> <A-j> :wincmd j<CR>
-nmap <silent> <A-h> :wincmd h<CR>
-nmap <silent> <A-l> :wincmd l<CR>
-
-set number
-set tabstop=4
-set shiftwidth=4
-colorscheme gruvbox
